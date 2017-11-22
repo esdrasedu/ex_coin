@@ -8,26 +8,25 @@ defmodule ExCoin.Blockchain.Transaction do
 
   ```
   %Transaction{
-    transfer: %Transfer{},
+    id: "",
+    outputs: [%Output{}],
     timestamp: {1509, 931186, 658718},
-    public_key: ""
-    signature: "" # signed transaction hash
+    public_key: "",
+    signatures: [""] # signed transaction hash
   }
   ```
   """
 
-  defstruct [:transfer, :timestamp, :public_key, :signature]
+  defstruct [:id, :outputs, :timestamp, :public_key, :signatures]
 
-  alias ExCoin.Blockchain.{Transaction, Transfer}
+  alias ExCoin.Blockchain.Output
 
   @type t :: %__MODULE__{
-    transfer: Transfer.t,
+    id: String.t,
+    outputs: [Output.t],
     timestamp: {Integer.t, Integer.t, Integer.t},
     public_key: String.t,
-    signature: String.t
+    signatures: [String.t]
   }
 
-  def to_string(%Transaction{public_key: pk} = transaction) do
-    "#{Transfer.to_json(transaction)}#{pk}"
-  end
 end
