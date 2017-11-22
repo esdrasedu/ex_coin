@@ -20,6 +20,7 @@ defmodule ExCoin.Mixfile do
   defp deps do
     [
       {:poison, "~> 3.1"},
+      {:exleveldb, "~> 0.12.1"},
       {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false},
       {:credo, "~> 0.8.1", only: [:dev, :test], runtime: false}
     ]
