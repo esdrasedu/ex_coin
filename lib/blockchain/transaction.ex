@@ -28,5 +28,4 @@ defmodule ExCoin.Blockchain.Transaction do
     public_key: String.t,
     signatures: [String.t]
   }
-
 end

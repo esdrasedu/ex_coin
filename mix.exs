@@ -13,6 +13,7 @@ defmodule ExCoin.Mixfile do
 
   def application do
     [
+      mod: {ExCoin, []},
       extra_applications: [:logger]
     ]
   end
