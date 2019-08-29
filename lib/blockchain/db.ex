@@ -1,7 +1,7 @@
 defmodule ExCoin.Blockchain.DB do
   use GenServer
 
-  alias ExCoin.Blockchain.Transaction
+  alias ExCoin.Blockchain.{Block, Transaction, Output}
 
   def init(%{database: database}) do
     {:ok, %{database: database}}
@@ -14,17 +14,31 @@ defmodule ExCoin.Blockchain.DB do
   end
 
   def handle_call({:get, id}, _from, %{database: database}) when is_bitstring(id) do
-    result = Exleveldb.get(database, id);
+    result = Exleveldb.get(database, id)
+    |> decode()
+
     {:reply, result, %{database: database}}
   end
 
-  def handle_cast({:put, id, transation}, %{database: database}) do
-    :ok = Exleveldb.put(database, id, transation);
+  defp decode(:not_found), do: {:error, "id not found on database"}
+  defp decode({:ok, json}) do
+    json
+    |> Jason.decode([keys: :atoms!])
+    |> case do
+         {:ok, %{tx_id: _tx_id} = output} -> {:ok, struct(Output, output)}
+         {:ok, %{outputs: _outputs} = transaction} -> {:ok, struct(Transaction, transaction)}
+         {:ok, %{hash: _block} = block} -> {:ok, struct(Block, block)}
+         _error -> {:error, "corrupted database"}
+       end
+  end
+
+  def handle_cast({:put, id, data}, %{database: database}) do
+    :ok = Exleveldb.put(database, id, data);
     {:noreply, %{database: database}}
   end
 
-  @spec get(binary) :: Transaction.t | :not_found
-  def get(id) when is_bitstring(id) do
+  @spec find(binary | integer) :: {:ok, Transaction.t} | {:ok, Output.t} | {:error, binary}
+  def find(id) when is_bitstring(id) or is_integer(id) do
     __MODULE__
     |> GenServer.call({:get, id})
     |> case do
@@ -32,9 +46,17 @@ defmodule ExCoin.Blockchain.DB do
     end
   end
 
-  @spec put(Transaction.t) :: :ok | {:error, binary}
-  def put(transation) do
-    transation_json = Poison.encode(transation)
-    GenServer.cast(__MODULE__, {:put, transation.id, transation_json})
+  @spec save(Block.t | Transaction.t | Output.t) :: :ok | {:error, binary}
+  def save(data) do
+    {:ok, json} = data
+    |> Map.from_struct()
+    |> Jason.encode()
+
+    index = data
+    |> case do
+         %{id: id} -> id
+         %{index: index} -> index
+       end
+    GenServer.cast(__MODULE__, {:put, index, json})
   end
 end
