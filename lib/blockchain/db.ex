@@ -55,7 +55,7 @@ defmodule ExCoin.Blockchain.DB do
     index = data
     |> case do
          %{id: id} -> id
-         %{index: index} -> index
+         %{hash: hash} -> hash
        end
     GenServer.cast(__MODULE__, {:put, index, json})
   end
