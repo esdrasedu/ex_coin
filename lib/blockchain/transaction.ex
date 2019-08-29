@@ -9,7 +9,7 @@ defmodule ExCoin.Blockchain.Transaction do
   ```
   %Transaction{
     id: "",
-    outputs: [%Output{}],
+    outputs: ["Output id"],
     timestamp: {1509, 931186, 658718},
     public_key: "",
     signatures: [""] # signed transaction hash
@@ -19,14 +19,11 @@ defmodule ExCoin.Blockchain.Transaction do
 
   defstruct [:id, :outputs, :timestamp, :public_key, :signatures]
 
-  alias ExCoin.Blockchain.Output
-
   @type t :: %__MODULE__{
     id: String.t,
-    outputs: [Output.t],
-    timestamp: {Integer.t, Integer.t, Integer.t},
+    outputs: [String.t],
+    timestamp: Integer.t,
     public_key: String.t,
     signatures: [String.t]
   }
-
 end

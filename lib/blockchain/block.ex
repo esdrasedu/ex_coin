@@ -6,7 +6,7 @@ defmodule ExCoin.Blockchain.Block do
   @type t :: %__MODULE__{
     index: Integer.t,
     previous_hash: String.t,
-    timestamp: {Integer.t, Integer.t, Integer.t},
+    timestamp: Integer.t,
     data: String.t,
     nonce: Integer.t,
     hash: String.t

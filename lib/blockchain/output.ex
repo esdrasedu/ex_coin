@@ -26,11 +26,4 @@ defmodule ExCoin.Blockchain.Output do
     amount: Integer.t,
     fee: Integer.t
   }
-
-  alias ExCoin.Blockchain.Output
-
-  def to_json(%Output{} = output) do
-    Poison.encode(output)
-  end
-
 end
